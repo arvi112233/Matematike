@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuizi Matematikor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Top Counter -->
+    <div id="completed-counter" class="counter">
+        Pyetje të përfunduara: <span id="completed">0</span>
+    </div>
+
+    <!-- Quiz Container -->
+    <div class="quiz-container">
+        <h1>Kuizi Matematikor mbi Këndet</h1>
+        <div id="question" class="question-box"></div>
+        <input type="text" id="answer" placeholder="Përgjigjja juaj">
+        <button id="submit">Dërgo</button>
+        <div id="result"></div>
+    </div>
+
+    <!-- Bottom Counter -->
+    <div id="remaining-counter" class="counter">
+        Pyetje të mbetura: <span id="remaining">0</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
