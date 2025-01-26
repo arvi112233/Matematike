@@ -4,14 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuizi Matematikor</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            margin: 0;
+            animation: backgroundAnimation 10s ease infinite;
+        }
+        @keyframes backgroundAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* Counters Styling */
+        .counter {
+            font-size: 18px;
+            color: white;
+            text-align: center;
+            margin: 10px 0;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        #completed-counter {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        #remaining-counter {
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+        }
+        /* Quiz Container Styling */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s ease;
+            width: 80%;
+            max-width: 500px;
+            margin: auto;
+        }
+        .quiz-container:hover {
+            transform: scale(1.05);
+        }
+        /* Headings */
+        h1 {
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        /* Input Field */
+        input[type="text"] {
+            padding: 10px;
+            border: 2px solid #0072ff;
+            border-radius: 5px;
+            width: 80%;
+            margin: 10px 0;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #00c6ff;
+            outline: none;
+        }
+        /* Buttons */
+        button {
+            background-color: #0072ff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #00c6ff;
+        }
+        /* Animations for Correct and Pop */
+        .correct {
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .pop {
+            animation: pop 0.5s ease;
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
 <body>
     <!-- Top Counter -->
     <div id="completed-counter" class="counter">
         Pyetje të përfunduara: <span id="completed">0</span>
     </div>
-
     <!-- Quiz Container -->
     <div class="quiz-container">
         <h1>Kuizi Matematikor mbi Këndet</h1>
@@ -20,12 +120,85 @@
         <button id="submit">Dërgo</button>
         <div id="result"></div>
     </div>
-
     <!-- Bottom Counter -->
     <div id="remaining-counter" class="counter">
         Pyetje të mbetura: <span id="remaining">0</span>
     </div>
+    <script>
+        const questions = [
+            { question: "Sa është shuma e këndëve të brendshëm në një trekëndësh?", answer: "180" },
+            { question: "Sa gradë është një kënd i drejtë?", answer: "90" },
+            { question: "Sa është shuma e këndëve të brendshëm në një katërkëndësh?", answer: "360" },
+            { question: "Si quhet një kënd që është më pak se 90 gradë?", answer: "kend i ngushte" },
+            { question: "Si quhet një kënd që është më shumë se 90 gradë, por më pak se 180 gradë?", answer: "kend i gjere" },
+            { question: "Si quhet një kënd që është më shumë se 180 gradë, por më pak se 360 gradë?", answer: "kend refleksiv" },
+            { question: "Sa është shuma e këndëve të brendshëm në një gjashtëkëndësh?", answer: "720" },
+            { question: "Sa është shuma e këndëve të brendshëm në një pesëkëndësh?", answer: "540" },
+            { question: "Sa është shuma e këndëve të brendshëm në një shtatëkëndësh?", answer: "900" },
+            { question: "Sa gradë ka një kënd i plotë?", answer: "360" }
+        ];
+        let currentQuestion = 0;
+        let completed = 0;
+        let remaining = questions.length;
 
-    <script src="script.js"></script>
+        function updateProgress() {
+            const completedElement = document.getElementById('completed');
+            const remainingElement = document.getElementById('remaining');
+
+            completedElement.classList.add('blur-out');
+            remainingElement.classList.add('blur-out');
+
+            setTimeout(() => {
+                completedElement.innerText = completed;
+                remainingElement.innerText = remaining;
+
+                completedElement.classList.remove('blur-out');
+                completedElement.classList.add('blur-in');
+
+                remainingElement.classList.remove('blur-out');
+                remainingElement.classList.add('blur-in');
+            }, 300);
+        }
+
+        function loadQuestion() {
+            const questionElement = document.getElementById('question');
+            questionElement.innerText = questions[currentQuestion].question;
+            updateProgress();
+        }
+
+        document.getElementById('submit').addEventListener('click', function() {
+            const answer = document.getElementById('answer').value;
+            const resultElement = document.getElementById('result');
+            const body = document.body;
+
+            if (answer.toLowerCase() === questions[currentQuestion].answer.toLowerCase()) {
+                resultElement.innerText = "Saktë!";
+                body.style.backgroundColor = "lightgreen";
+                setTimeout(() => {
+                    body.style.backgroundColor = "blue";
+                }, 1000);
+
+                completed++;
+                remaining--;
+
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    loadQuestion();
+                    document.getElementById('answer').value = '';
+                } else {
+                    resultElement.innerText = "Kuizi përfundoi!";
+                }
+            } else {
+                resultElement.innerText = "Provo përsëri!";
+                body.style.backgroundColor = "lightcoral";
+                setTimeout(() => {
+                    body.style.backgroundColor = "blue";
+                }, 1000);
+            }
+        });
+
+        // Initialize Quiz
+        loadQuestion();
+    </script>
 </body>
 </html>
